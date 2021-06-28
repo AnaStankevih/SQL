@@ -1,0 +1,373 @@
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| voodoo             |
++--------------------+
+2 rows in set (0.01 sec)
+mysql> USE voodoo;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SHOW TABLES;
++------------------+
+| Tables_in_voodoo |
++------------------+
+| Categories       |
+| Customers        |
+| Employees        |
+| OrderDetails     |
+| Orders           |
+| Products         |
+| Shippers         |
+| Suppliers        |
+| Z_Train          |
++------------------+
+9 rows in set (0.00 sec)
+
+1. mysql> SELECT * FROM Shippers;
++-----------+------------------+----------------+
+| ShipperID | ShipperName      | Phone          |
++-----------+------------------+----------------+
+|         1 | Speedy Express   | (503) 555-9831 |
+|         2 | United Package   | (503) 555-3199 |
+|         3 | Federal Shipping | (503) 555-9931 |
++-----------+------------------+----------------+
+3 rows in set (0.00 sec)
+
+2.mysql> SELECT * FROM Employees LIMIT 3;
++------------+-----------+-----------+------------+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| EmployeeID | LastName  | FirstName | BirthDate  | Photo      | Notes                                                                                                                                                                                                                                                                                                                                                                                                                       |
++------------+-----------+-----------+------------+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|          1 | Davolio   | Nancy     | 1968-12-08 | EmpID1.pic | Education includes a BA in psychology from Colorado State University. She also completed (The Art of the Cold Call). Nancy is a member of 'Toastmasters International'.                                                                                                                                                                                                                                                     |
+|          2 | Fuller    | Andrew    | 1952-02-19 | EmpID2.pic | Andrew received his BTS commercial and a Ph.D. in international marketing from the University of Dallas. He is fluent in French and Italian and reads German. He joined the company as a sales representative, was promoted to sales manager and was then named vice president of sales. Andrew is a member of the Sales Management Roundtable, the Seattle Chamber of Commerce, and the Pacific Rim Importers Association. |
+|          3 | Leverling | Janet     | 1963-08-30 | EmpID3.pic | Janet has a BS degree in chemistry from Boston College). She has also completed a certificate program in food retailing management. Janet was hired as a sales associate and was promoted to sales representative.                                                                                                                                                                                                          |
++------------+-----------+-----------+------------+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+3 rows in set (0.00 sec)
+
+3. mysql> SELECT BirthDate, FirstName, LastName FROM Employees LIMIT 3;
++------------+-----------+-----------+
+| BirthDate  | FirstName | LastName  |
++------------+-----------+-----------+
+| 1968-12-08 | Nancy     | Davolio   |
+| 1952-02-19 | Andrew    | Fuller    |
+| 1963-08-30 | Janet     | Leverling |
++------------+-----------+-----------+
+3 rows in set (0.00 sec)
+
+4. mysql> SELECT FirstName, LastName FROM Employees WHERE BirthDate LIKE '1958-%-%';
++-----------+----------+
+| FirstName | LastName |
++-----------+----------+
+| Margaret  | Peacock  |
+| Laura     | Callahan |
++-----------+----------+
+2 rows in set, 1 warning (0.00 sec)
+
+5. mysql> SELECT *FROM Products WHERE Price Between 23 and 25;
++-----------+------------------------------+------------+------------+-------------------+-------+
+| ProductID | ProductName                  | SupplierID | CategoryID | Unit              | Price |
++-----------+------------------------------+------------+------------+-------------------+-------+
+|         6 | Grandma's Boysenberry Spread |          3 |          2 | 12 - 8 oz jars    | 25.00 |
+|        14 | Tofu                         |          6 |          7 | 40 - 100 g pkgs.  | 23.25 |
+|        55 | Pbtu chinois                 |         25 |          6 | 24 boxes x 2 pies | 24.00 |
++-----------+------------------------------+------------+------------+-------------------+-------+
+3 rows in set (0.00 sec)
+
+6. mysql> SELECT * FROM Products WHERE Price=(SELECT MIN(Price) FROM Products);
++-----------+-------------+------------+------------+-------+-------+
+| ProductID | ProductName | SupplierID | CategoryID | Unit  | Price |
++-----------+-------------+------------+------------+-------+-------+
+|        33 | Geitost     |         15 |          4 | 500 g |  2.50 |
++-----------+-------------+------------+------------+-------+-------+
+1 row in set (0.00 sec)
+
+7. mysql> SELECT * FROM Products WHERE Price=(SELECT MAX(Price) FROM Products);
++-----------+---------------+------------+------------+--------------------+--------+
+| ProductID | ProductName   | SupplierID | CategoryID | Unit               | Price  |
++-----------+---------------+------------+------------+--------------------+--------+
+|        38 | Cute de Blaye |         18 |          1 | 12 - 75 cl bottles | 263.50 |
++-----------+---------------+------------+------------+--------------------+--------+
+1 row in set (0.00 sec)
+
+8. mysql> SELECT * FROM Products WHERE Unit LIKE '10 pk%';
++-----------+-------------+------------+------------+----------+-------+
+| ProductID | ProductName | SupplierID | CategoryID | Unit     | Price |
++-----------+-------------+------------+------------+----------+-------+
+|        48 | Chocolade   |         22 |          3 | 10 pkgs. | 12.75 |
++-----------+-------------+------------+------------+----------+-------+
+1 row in set (0.00 sec)
+
+9. mysql> SELECT Address FROM Suppliers WHERE City IN ('Tokyo', 'Frankfurt', 'Osaka');
++---------------------------+
+| Address                   |
++---------------------------+
+| 9-8 Sekimai Musashino-shi |
+| 92 Setsuko Chuo-ku        |
+| Bogenallee 51             |
++---------------------------+
+3 rows in set (0.00 sec)
+
+10.  mysql> SELECT ProductName FROM Products WHERE ProductName LIKE 'G%' AND Price > 37;
++------------------------+
+| ProductName            |
++------------------------+
+| Gnocchi di nonna Alice |
++------------------------+
+1 row in set (0.00 sec)
+
+11. mysql> SELECT Country FROM Suppliers WHERE Country LIKE 'S____';
++---------+
+| Country |
++---------+
+| Spain   |
++---------+
+1 row in set (0.00 sec)
+
+12. mysql> SELECT SUM(Price) AS 'Summ' FROM Products WHERE ProductName LIKE '%od%';
++--------+
+| Summ   |
++--------+
+| 131.00 |
++--------+
+1 row in set (0.00 sec)
+
+13. mysql> SELECT ROUND(AVG(Price),2) AS 'Summ' FROM Products WHERE Unit LIKE '%bottles%';
++-------+
+| Summ  |
++-------+
+| 38.75 |
++-------+
+1 row in set (0.01 sec)
+
+
+14. mysql> SELECT COUNT(*) AS 'Countt' FROM Customers WHERE Country NOT LIKE 'Fran%' AND Country NOT LIKE 'Ger%';
++--------+
+| Countt |
++--------+
+|     69 |
++--------+
+1 row in set (0.00 sec)
+
+
+15.  mysql> SELECT FirstName FROM Employees WHERE BirthDate>='1968-01-01' ORDER BY FirstName;
++-----------+
+| FirstName |
++-----------+
+| Anne      |
+| Nancy     |
++-----------+
+2 rows in set (0.00 sec)
+
+16. mysql> SELECT ProductName FROM Products WHERE Price = 13 UNION  SELECT ProductName FROM Products WHERE Price = 15;
++---------------------------------+
+| ProductName                     |
++---------------------------------+
+| Original Frankfurter grine Soae |
+| Outback Lager                   |
+| Rud Kaviar                      |
++---------------------------------+
+3 rows in set (0.00 sec)
+
+
+17. mysql> SELECT ProductName, SupplierName
+    -> FROM Products
+    -> INNER JOIN Suppliers
+    -> ON Products.SupplierID = Suppliers.SupplierID
+    -> WHERE Products.ProductName LIKE '__m%';
++---------------------------+-----------------------------------+
+| ProductName               | SupplierName                      |
++---------------------------+-----------------------------------+
+| Gumbur Gummiburchen       | Heli Swaren GmbH & Co. KG         |
+| Camembert Pierrot         | Gai puturage                      |
+| Wimmers gute Semmelknudel | Plutzer Lebensmittelgroumurkte AG |
++---------------------------+-----------------------------------+
+3 rows in set (0.01 sec)
+ 
+18.1 INNER JOIN
+mysql> SELECT FirstName, LastName FROM Employees
+    -> INNER JOIN Orders
+    -> ON Employees.EmployeeID = Orders.EmployeeID
+    -> WHERE Orders.OrderDate = '1996-11-27';
++-----------+-----------+
+| FirstName | LastName  |
++-----------+-----------+
+| Janet     | Leverling |
++-----------+-----------+
+1 row in set (0.00 sec)
+
+18.2 Подзапрос
+ mysql> SELECT FirstName, LastName FROM Employees WHERE EmployeeID IN 
+          (SELECT EmployeeID FROM Orders WHERE OrderDate = '1996-11-27');
++-----------+-----------+
+| FirstName | LastName  |
++-----------+-----------+
+| Janet     | Leverling |
++-----------+-----------+
+1 row in set (0.00 sec)
+
+
+19. mysql> SELECT ProductName, SupplierName, Price
+    -> FROM Products
+    -> INNER JOIN Suppliers
+    -> ON Products.SupplierID = Suppliers.SupplierID
+    -> WHERE Suppliers.SupplierID = 3 AND Products.Price > 27;
++---------------------------------+---------------------------+-------+
+| ProductName                     | SupplierName              | Price |
++---------------------------------+---------------------------+-------+
+| Uncle Bob's Organic Dried Pears | Grandma Kelly's Homestead | 30.00 |
+| Northwoods Cranberry Sauce      | Grandma Kelly's Homestead | 40.00 |
++---------------------------------+---------------------------+-------+
+2 rows in set (0.00 sec)
+
+20.1 Подзапрос
+mysql> SELECT SUM(Quantity) AS Summ 
+    ->FROM OrderDetails WHERE ProductID IN 
+    ->(SELECT ProductID FROM OrderDetails WHERE ProductID = 11);
++------+
+| Summ |
++------+
+|  182 |
++------+
+1 row in set (0.00 sec)
+
+20.2 INNER JOIN
+mysql> SELECT SUM(Quantity) AS Summ 
+    -> FROM Products 
+    -> INNER JOIN OrderDetails ON Products.ProductID = OrderDetails.ProductID 
+    -> WHERE Products.ProductID = 11;
++------+
+| Summ |
++------+
+|  182 |
++------+
+1 row in set (0.00 sec)
+
+21. mysql> SELECT OrderID, CustomerName, FirstName, LastName
+    -> FROM Orders
+    -> INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+    -> INNER JOIN Employees ON Employees.EmployeeID = Orders.EmployeeID
+    -> WHERE Customers.CustomerID = 24;
++---------+----------------+-----------+-----------+
+| OrderID | CustomerName   | FirstName | LastName  |
++---------+----------------+-----------+-----------+
+|   10264 | Folk och fe HB | Michael   | Suyama    |
+|   10327 | Folk och fe HB | Andrew    | Fuller    |
+|   10378 | Folk och fe HB | Steven    | Buchanan  |
+|   10434 | Folk och fe HB | Janet     | Leverling |
++---------+----------------+-----------+-----------+
+4 rows in set (0.00 sec)
+
+22. mysql> SELECT OrderID, CustomerName, CONCAT(FirstName,' ', LastName) AS EmployeeName 
+    -> FROM Orders 
+    -> LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID 
+    -> LEFT JOIN Employees ON Employees.EmployeeID = Orders.EmployeeID 
+    -> WHERE Customers.CustomerID = 24;
++---------+----------------+-----------------+
+| OrderID | CustomerName   | EmployeeName    |
++---------+----------------+-----------------+
+|   10264 | Folk och fe HB | Michael Suyama  |
+|   10327 | Folk och fe HB | Andrew Fuller   |
+|   10378 | Folk och fe HB | Steven Buchanan |
+|   10434 | Folk och fe HB | Janet Leverling |
++---------+----------------+-----------------+
+4 rows in set (0.00 sec)
+
+23.1 Подзапрос
+mysql> SELECT Orders.OrderID, Orders.OrderDate, ProductName 
+    -> FROM Orders, Products 
+    -> WHERE OrderID IN (SELECT OrderID FROM OrderDetails WHERE OrderDate BETWEEN '1997-01-01' AND '1997-12-31' AND 
+    -> ProductID IN (SELECT ProductID FROM OrderDetails WHERE ProductName LIKE '____' AND ProductID = 14));
++---------+------------+-------------+
+| OrderID | OrderDate  | ProductName |
++---------+------------+-------------+
+|   10409 | 1997-01-09 | Tofu        |
+|   10412 | 1997-01-13 | Tofu        |
+|   10427 | 1997-01-27 | Tofu        |
++---------+------------+-------------+
+3 rows in set (0.01 sec)
+
+23.2 INNER JOIN
+mysql> SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName 
+    -> FROM Orders INNER JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID 
+    -> INNER JOIN Products ON Products.ProductID = OrderDetails.ProductID 
+    -> WHERE Orders.OrderDate BETWEEN '1997-01-01' AND '1997-12-31' 
+    -> AND Products.ProductName LIKE '____';
++---------+------------+-------------+
+| OrderID | OrderDate  | ProductName |
++---------+------------+-------------+
+|   10409 | 1997-01-09 | Tofu        |
+|   10412 | 1997-01-13 | Tofu        |
+|   10427 | 1997-01-27 | Tofu        |
++---------+------------+-------------+
+3 rows in set (0.00 sec)
+
+24. mysql> SELECT Categories.CategoryName, Products.ProductName 
+        -> FROM Products 
+        -> INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID 
+        -> WHERE Products.ProductID = 72;
++----------------+------------------------+
+| CategoryName   | ProductName            |
++----------------+------------------------+
+| Dairy Products | Mozzarella di Giovanni |
++----------------+------------------------+
+1 row in set (0.00 sec)
+
+25. mysql> SELECT COUNT(CustomerName) AS Buyers 
+        -> FROM Orders INNER JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID 
+        -> INNER JOIN Customers ON Customers.CustomerID = Orders.CustomerID 
+        -> WHERE OrderDetails.ProductID IN (11, 22, 27, 56, 65);
++--------+
+| Buyers |
++--------+
+|     25 |
++--------+
+1 row in set (0.00 sec)
+
+26. mysql> SELECT Customers.City, COUNT(OrderID) AS Amount 
+        -> FROM Orders 
+        -> LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID 
+        -> GROUP BY Customers.City 
+        -> HAVING COUNT(Customers.City) > 8;
++-------------+--------+
+| City        | Amount |
++-------------+--------+
+| Graz        |     10 |
+| London      |      9 |
+| Mexico D.F. |      9 |
++-------------+--------+
+3 rows in set (0.00 sec)
+
+27. mysql> SELECT Suppliers.City, SUM(OrderDetails.Quantity) AS Amount 
+        -> FROM Products 
+        -> JOIN Suppliers ON Products.SupplierID = Suppliers.SupplierID 
+        -> JOIN OrderDetails ON OrderDetails.ProductID = Products.ProductID 
+        -> WHERE OrderDetails.OrderID IN (10289, 10355, 10359, 10364, 10377, 10383, 10388, 10400, 10435) 
+        -> AND Suppliers.SupplierID IN (14, 28) 
+        -> GROUP BY City;
++---------+--------+
+| City    | Amount |
++---------+--------+
+| Annecy  |     80 |
+| Ravenna |     80 |
++---------+--------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
